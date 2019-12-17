@@ -75,8 +75,6 @@ const resultOffset = 5973431
 
 const modulo = resultOffset % myResult.length 
 
-console.log(myResult.includes("60592199"))
-
 console.log(modulo)
 
 console.log(myResult.substr(modulo, 8))
