@@ -113,9 +113,14 @@ const getStartingPosition = (targetArray, findSymbol) => {
     return [yPos, xPos]
 }
 
-let reachableObjects = []
+let currentLowest = 160
 
-const getReachableObjects = (startPosition, prevPosition = [-1, -1], keys = [], reachableObjects = [], deep = 0, visited = {}) => {
+const getReachableObjects = (startPosition, prevPosition = [-1, -1], keys = [], reachableObjects = [], deep = 1, visited = {}) => {
+    
+
+    if(deep > currentLowest){
+        return
+    }
 
     if (visited[`${startPosition[0]},${startPosition[1]}`]) {
         return
@@ -181,7 +186,9 @@ const getReachableObjects = (startPosition, prevPosition = [-1, -1], keys = [], 
 
 const getShortestDistanceTo = (startPosition, prevPosition = [-1, -1], deep = 0, visited = {}, target, solutions = []) => {
 
-    if (deep > 500) return
+    if(deep > currentLowest){
+        return
+    }
 
     visited[`${startPosition[0]},${startPosition[1]}`] = 1
 
@@ -226,7 +233,7 @@ const getShortestDistanceTo = (startPosition, prevPosition = [-1, -1], deep = 0,
     }
 
     if(solutions.length > 0){
-        return solutions.reduce((acc, val) => acc < val ? acc : val)
+       return solutions.reduce((acc, val) => acc < val ? acc : val)
     }
 }
 
@@ -234,21 +241,59 @@ const getShortestDistanceTo = (startPosition, prevPosition = [-1, -1], deep = 0,
 
 const steps = []
 
+const distances = new Map()
+
 const objectFromStartingPosition = getReachableObjects(getStartingPosition(tiles, "@"), [-1, -1])
 
+const magic = new Array(30).fill(0).map(val => [])
+
+let iterations = 0
+
 const doSomething = (position, target, keys, deep = 1) => {
+
+    // iterations += 1
+
+    // if(iterations > 1000){
+    //     if((magic[keys.length].reduce((acc, val) => acc+=val)/magic[keys.length].length)*1.5 < deep){
+    //         return
+    //     }
+    // }
+
+    // magic[keys.length].push(deep)
+
+    if(deep > currentLowest){
+        return
+    }
+
     const newkeys = [...keys]
     newkeys.push(tiles[position[0]][position[1]])
 
     const reachableObjects = getReachableObjects(position, [-1, -1], newkeys, [], 0, {})
 
     if (reachableObjects.length === 0) {
-        steps.push(deep)
+        if(deep < currentLowest){
+            currentLowest = deep
+            steps.push(deep)
+            console.log(steps[steps.length-1])
+        }
         return
     }
 
     reachableObjects.forEach(key => {
-        const currentDeep = getShortestDistanceTo(position, [-1, -1], deep, {}, key, [])
+        const cachedDistance = distances.get(`${tiles[position[0]][position[1]]}-${key}`)
+        let currentDeep
+
+        if(cachedDistance){
+            
+            currentDeep = deep+cachedDistance
+        }else
+        {
+            currentDeep = getShortestDistanceTo(position, [-1, -1], deep, {}, key, [])
+           
+            distances.set(`${tiles[position[0]][position[1]]}-${key}`, currentDeep - deep)
+        }
+
+        if(!currentDeep){return}
         doSomething(getStartingPosition(tiles, key), key, newkeys, currentDeep +1)
     }
     )
@@ -259,8 +304,7 @@ objectFromStartingPosition.forEach(key => {
    
     const currentDeep = getShortestDistanceTo(getStartingPosition(tiles, "@"), [-1, -1], 1, {}, key, [])
     doSomething(getStartingPosition(tiles, key), key, [], currentDeep)
-    console.log(steps.join(' '))
 }
 )
 
-console.log(steps.reduce((acc, val) => acc < val ? acc : val))
+// console.log("BEST ",steps.reduce((acc, val) => acc < val ? acc : val))
