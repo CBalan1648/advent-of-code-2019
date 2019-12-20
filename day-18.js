@@ -104,7 +104,7 @@ const anotherTestInput = [
     '#################',
 ]
 
-const tiles = puzzleInput.map(inputString => inputString.split(''))
+const tiles = anotherTestInput.map(inputString => inputString.split(''))
 
 const getStartingPosition = (targetArray, findSymbol) => {
     const yPos = targetArray.findIndex(val => val.includes(findSymbol))
@@ -189,7 +189,7 @@ const getShortestDistanceTo = (startPosition, prevPosition = [-1, -1], deep = 0,
     const targetPosition = getStartingPosition(tiles, target)
 
     const yDistance = targetPosition[0] - startPosition[0]
-    const xDistance = targetPosition[0] - startPosition[0]
+    const xDistance = targetPosition[1] - startPosition[1]
     const distance = Math.sqrt(xDistance * xDistance + yDistance * yDistance)
 
     if(!startDistance){
