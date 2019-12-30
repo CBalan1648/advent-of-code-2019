@@ -1,3 +1,5 @@
+///////////////////////////////////////////////////////////// Day 14 Part 2
+
 const input = [
   "2 MPHSH, 3 NQNX => 3 FWHL",
   "144 ORE => 1 CXRVG",
@@ -206,7 +208,7 @@ const optimize = () => {
 
 // console.log(elementStockPile)
 
-////// part 2
+///////////////////////////////////////////////////////////// Day 14 Part 2
 
 for (let formula of getFormula("FUEL").req) {
   elementStockPile.set(formula[1], formula[0] * constFuel);

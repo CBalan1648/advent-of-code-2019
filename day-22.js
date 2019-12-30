@@ -1,4 +1,4 @@
-
+///////////////////////////////////////////////////////////// Day 22 Part 1
 
 const testInput = [
   "deal into new stack",
@@ -236,3 +236,5 @@ const processInput = () => {
 
 console.log(result)
 
+///////////////////////////////////////////////////////////// Day 22 Part 2
+// No part 2
